@@ -15,20 +15,21 @@ install_dependencies() {
     fi
 }
 
-# 函数：检查SSH私钥文件是否存在，如果不存在则生成新的SSH密钥对
+# 函数：生成SSH密钥对
 generate_ssh_keypair() {
     local ssh_key_file=~/.ssh/id_rsa
     if [ ! -f "$ssh_key_file" ]; then
         echo "Generating new SSH key pair..."
-        ssh-keygen -t rsa -b 4096 -C "your_email@example.com" -f "$ssh_key_file" -q -N ""
+        local email=$(generate_email)
+        ssh-keygen -t rsa -b 4096 -C "$email" -f "$ssh_key_file" -q -N ""
     fi
 }
 
-# 函数：设置SSH私钥文件权限
+# 函数：设置SSH密钥文件权限
 set_key_permissions() {
     echo "Setting SSH key file permissions..."
-    local ssh_key_file=$(find ~/.ssh -type f -name "*.pem" | head -n 1)
-    if [ -n "$ssh_key_file" ]; then
+    local ssh_key_file=~/.ssh/id_rsa
+    if [ -f "$ssh_key_file" ]; then
         chmod 400 "$ssh_key_file"
     else
         echo "No SSH private key file found."
@@ -42,11 +43,18 @@ enable_ssh_connection() {
     local local_ip=$(hostname -I | awk '{print $1}')
     local vps_ip="$local_ip"
     local ssh_user=$(whoami)
-    local ssh_key_file=$(find ~/.ssh -type f -name "*.pem" | head -n 1)
+    local ssh_key_file=~/.ssh/id_rsa
     
-    cat "$ssh_key_file" | ssh -i "$ssh_key_file" "$ssh_user@$vps_ip" 'cat >> ~/.ssh/authorized_keys'
+    cat "$ssh_key_file.pub" | ssh -i "$ssh_key_file" "$ssh_user@$vps_ip" 'cat >> ~/.ssh/authorized_keys'
     ssh -i "$ssh_key_file" "$ssh_user@$vps_ip" 'sudo sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/" /etc/ssh/sshd_config'
     ssh -i "$ssh_key_file" "$ssh_user@$vps_ip" 'sudo systemctl restart sshd'
+}
+
+# 函数：生成随机的邮箱地址
+generate_email() {
+    local random_string=$(cat /dev/urandom | tr -dc 'a-z' | fold -w 8 | head -n 1)
+    local domain="example.com"
+    echo "$random_string@$domain"
 }
 
 # 主函数
@@ -59,7 +67,7 @@ main() {
     # 生成随机密码并设置给root账户
     local random_password=$(openssl rand -base64 12)
     echo "Randomly generated password for root account: $random_password"
-    local ssh_key_file=$(find ~/.ssh -type f -name "*.pem" | head -n 1)
+    local ssh_key_file=~/.ssh/id_rsa
     local local_ip=$(hostname -I | awk '{print $1}')
     sshpass -p "$random_password" ssh -i "$ssh_key_file" root@"$local_ip" << EOF
 echo "Setting root password..."
