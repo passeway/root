@@ -1,14 +1,11 @@
+#!/bin/bash
+
 # 生成10位包含特殊字符的密码
-import random
-import string
+generate_password() {
+    openssl rand -base64 12 | tr -dc 'a-zA-Z0-9!@#$%^&*()_+-=[]{}|;:,.<>?'
+}
 
-def generate_password(length=10):
-    special_characters = '!@#$%^&*()_+-=[]{}|;:,.<>?'
-    characters = string.ascii_letters + string.digits + special_characters
-    password = ''.join(random.choice(characters) for i in range(length))
-    return password
-
-password = generate_password()
+password=$(generate_password)
 
 # 输出密码
 echo "Generated password: $password"
