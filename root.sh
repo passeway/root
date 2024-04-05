@@ -1,20 +1,20 @@
-#!/bin/bash
+# 生成10位包含特殊字符的密码
+import random
+import string
 
-# 修改 SSH 配置文件以允许密码登录
-sudo sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+def generate_password(length=10):
+    special_characters = '!@#$%^&*()_+-=[]{}|;:,.<>?'
+    characters = string.ascii_letters + string.digits + special_characters
+    password = ''.join(random.choice(characters) for i in range(length))
+    return password
 
-# 重新启动 SSH 服务以应用新的配置
-sudo systemctl restart sshd
+password = generate_password()
 
-# 生成一个包含数字、字母和特殊字符的随机密码
-password=$(head /dev/urandom | tr -dc A-Za-z0-9\!\@\#\$\%\^\&\*\(\)-\+= | head -c 16 ; echo '')
+# 输出密码
+echo "Generated password: $password"
 
-# 输出自动生成的密码
-echo "自动生成的密码为: $password"
-
-# 修改 root 账户的密码
-echo "正在修改 root 账户的密码..."
-echo "root:$password" | sudo chpasswd
-
-# 输出修改密码的结果
-echo "root 账户的密码已成功修改为自动生成的密码。请妥善保管密码，并不要分享给任何人。"
+# 设置密码并执行其他命令
+echo "root:$password" | sudo chpasswd root
+sudo sed -i 's/^?permitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
+sudo sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+sudo service sshd restart
