@@ -10,7 +10,7 @@ check_error() {
 
 # 生成随机密码
 generate_random_password() {
-    random_password=$(openssl rand -base64 12)
+    random_password=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9!@#$%^&*()_-')
     echo "root:$random_password" | sudo chpasswd
     check_error
     echo "$random_password" # 输出密码
@@ -50,5 +50,4 @@ check_error
 sudo service sshd restart
 check_error
 
-echo "密码更改成功。
-密码为：$password" # 输出密码
+echo "密码更改成功：$password" # 输出密码
