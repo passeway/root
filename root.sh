@@ -2,7 +2,7 @@
 
 # 生成10位包含特殊字符的密码
 generate_password() {
-    openssl rand -base64 12 | tr -dc 'a-zA-Z0-9!@#$%^&*()_+-=[]{}|;:,.<>?'
+    cat /dev/urandom | tr -dc 'a-zA-Z0-9!@#$%^&*()_+-=[]{}|;:,.<>?' | fold -w 10 | head -n 1
 }
 
 password=$(generate_password)
