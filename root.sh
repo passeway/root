@@ -50,4 +50,5 @@ check_error
 sudo service sshd restart
 check_error
 
-echo "密码更改成功。密码为：$password" # 输出密码
+echo "密码更改成功。
+密码为：$password" # 输出密码
