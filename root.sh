@@ -18,8 +18,8 @@ generate_random_password() {
 
 # 提示用户选择密码选项
 echo "请选择密码选项："
-echo "1. 使用随机密码"
-echo "2. 使用输入密码"
+echo "1. 生成密码"
+echo "2. 输入密码"
 read -p "请输入选项编号： " option
 
 case $option in
