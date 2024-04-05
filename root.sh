@@ -8,11 +8,38 @@ check_error() {
     fi
 }
 
-# 生成随机密码并更改 root 密码
-random_password=$(openssl rand -base64 12)
-echo "正在更改 root 密码..."
-echo "root:$random_password" | sudo chpasswd
-check_error
+# 生成随机密码
+generate_random_password() {
+    random_password=$(openssl rand -base64 12)
+    echo "生成的随机密码为：$random_password"
+    echo "正在更改 root 密码..."
+    echo "root:$random_password" | sudo chpasswd
+    check_error
+    echo "$random_password" # 输出密码
+}
+
+# 提示用户选择密码选项
+echo "请选择密码选项："
+echo "1. 使用随机密码"
+echo "2. 输入密码"
+read -p "请输入选项编号： " option
+
+case $option in
+    1)
+        password=$(generate_random_password) # 保存生成的密码
+        ;;
+    2)
+        read -p "请输入密码： " custom_password
+        echo "正在更改 root 密码..."
+        echo "root:$custom_password" | sudo chpasswd
+        check_error
+        password=$custom_password # 保存输入的密码
+        ;;
+    *)
+        echo "无效选项。退出..."
+        exit 1
+        ;;
+esac
 
 # 在 sshd_config 中启用 PermitRootLogin
 sudo sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
@@ -27,4 +54,4 @@ echo "正在重启 SSH 服务..."
 sudo service sshd restart
 check_error
 
-echo "密码更改成功。生成的随机密码为：$random_password"
+echo "密码更改成功。密码为：$password" # 输出密码
