@@ -11,7 +11,6 @@ check_error() {
 # 生成随机密码
 generate_random_password() {
     random_password=$(openssl rand -base64 12)
-    echo "生成的随机密码为：$random_password"
     echo "root:$random_password" | sudo chpasswd
     check_error
     echo "$random_password" # 输出密码
@@ -29,7 +28,6 @@ case $option in
         ;;
     2)
         read -p "请输入密码： " custom_password
-        echo "正在更改 root 密码..."
         echo "root:$custom_password" | sudo chpasswd
         check_error
         password=$custom_password # 保存输入的密码
