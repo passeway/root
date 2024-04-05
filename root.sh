@@ -12,7 +12,6 @@ check_error() {
 generate_random_password() {
     random_password=$(openssl rand -base64 12)
     echo "生成的随机密码为：$random_password"
-    echo "正在更改 root 密码..."
     echo "root:$random_password" | sudo chpasswd
     check_error
     echo "$random_password" # 输出密码
@@ -21,7 +20,7 @@ generate_random_password() {
 # 提示用户选择密码选项
 echo "请选择密码选项："
 echo "1. 使用随机密码"
-echo "2. 输入密码"
+echo "2. 使用输入密码"
 read -p "请输入选项编号： " option
 
 case $option in
@@ -50,7 +49,6 @@ sudo sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/s
 check_error
 
 # 重启 SSH 服务
-echo "正在重启 SSH 服务..."
 sudo service sshd restart
 check_error
 
