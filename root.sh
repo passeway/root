@@ -20,8 +20,13 @@ set_key_permissions() {
     echo "Setting SSH key file permissions..."
     # 获取SSH私钥文件路径
     key_file=$(find ~/.ssh -type f -name "*.pem" | head -n 1)
-    # 设置私钥文件权限
-    chmod 400 "$key_file"
+    if [ -n "$key_file" ]; then
+        # 设置私钥文件权限
+        chmod 400 "$key_file"
+    else
+        echo "SSH private key file not found."
+        exit 1
+    fi
 }
 
 # 启用VPS的SSH连接
