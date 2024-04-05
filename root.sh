@@ -45,9 +45,19 @@ enable_ssh_connection() {
     local ssh_user=$(whoami)
     local ssh_key_file=~/.ssh/id_rsa
     
-    cat "$ssh_key_file.pub" | ssh -i "$ssh_key_file" "$ssh_user@$vps_ip" 'cat >> ~/.ssh/authorized_keys'
-    ssh -i "$ssh_key_file" "$ssh_user@$vps_ip" 'sudo sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/" /etc/ssh/sshd_config'
-    ssh -i "$ssh_key_file" "$ssh_user@$vps_ip" 'sudo systemctl restart sshd'
+    # 检查SSH密钥是否已添加到VPS
+    if ! ssh -i "$ssh_key_file" "$ssh_user@$vps_ip" exit &> /dev/null; then
+        echo "Adding SSH key to VPS..."
+        cat "$ssh_key_file.pub" | ssh -i "$ssh_key_file" "$ssh_user@$vps_ip" 'cat >> ~/.ssh/authorized_keys'
+    fi
+    
+    # 检查SSH服务配置
+    local ssh_config_line=$(ssh -i "$ssh_key_file" "$ssh_user@$vps_ip" 'sudo grep -c "^PasswordAuthentication yes" /etc/ssh/sshd_config')
+    if [ "$ssh_config_line" -eq 0 ]; then
+        echo "Enabling PasswordAuthentication in SSH service configuration..."
+        ssh -i "$ssh_key_file" "$ssh_user@$vps_ip" 'sudo sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/" /etc/ssh/sshd_config'
+        ssh -i "$ssh_key_file" "$ssh_user@$vps_ip" 'sudo systemctl restart sshd'
+    fi
 }
 
 # 函数：生成随机的邮箱地址
