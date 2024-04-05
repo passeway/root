@@ -47,7 +47,7 @@ sudo sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/s
 check_error
 
 # 重启 SSH 服务
-sudo service sshd restart
+sudo service ssh restart
 check_error
 
 echo "密码更改成功：$password" # 输出密码
