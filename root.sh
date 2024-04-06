@@ -16,6 +16,30 @@ generate_random_password() {
     echo "$random_password" # 输出密码
 }
 
+# 修改 sshd_config 文件
+modify_sshd_config() {
+    sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+    check_error
+
+    # 在 sshd_config 中启用 PermitRootLogin
+    sudo sed -i 's/^#?PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
+    check_error
+
+    # 在 sshd_config 中启用 PasswordAuthentication
+    sudo sed -i 's/^#?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+    check_error
+
+    # 验证修改是否成功
+    grep -E "PermitRootLogin|PasswordAuthentication" /etc/ssh/sshd_config
+    check_error
+}
+
+# 重启 SSHD 服务
+restart_sshd_service() {
+    sudo service sshd restart
+    check_error
+}
+
 # 提示用户选择密码选项
 echo "请选择密码选项："
 echo "1. 生成密码"
@@ -38,27 +62,11 @@ case $option in
         ;;
 esac
 
-# 备份 sshd_config 文件
-sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
-check_error
-
-# 在 sshd_config 中启用 PermitRootLogin
-sudo sed -i 's/^#?PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
-check_error
-
-# 在 sshd_config 中启用 PasswordAuthentication
-sudo sed -i 's/^#?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config
-check_error
-
-# 验证修改是否成功
-grep -E "PermitRootLogin|PasswordAuthentication" /etc/ssh/sshd_config
-check_error
-
-# 重启 SSHD 服务
-sudo service sshd restart
-check_error
+modify_sshd_config
+restart_sshd_service
 
 echo "密码更改成功：$password" # 输出密码
+
 
 # 删除下载的脚本
 rm -f "$0"
