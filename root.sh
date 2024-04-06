@@ -3,41 +3,41 @@
 # 函数：检查错误并退出
 check_error() {
     if [ $? -ne 0 ]; then
-        echo "发生错误。退出..."
+        echo "发生错误。退出..." >&2
         exit 1
     fi
 }
 
 # 生成随机密码
 generate_random_password() {
-    random_password=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9!@#$%^&*()_-')
+    # 检查是否有root权限
+    if [ "$(id -u)" -ne 0 ]; then
+        echo "需要root权限来设置密码。退出..." >&2
+        exit 1
+    fi
+
+    # 生成16位随机密码，包含大小写字母、数字和特殊字符
+    random_password=$(openssl rand -base64 16 | tr -dc 'a-zA-Z0-9!@#$%^&*()_-')
     echo "root:$random_password" | sudo chpasswd
     check_error
-    echo "$random_password" # 输出密码
+    echo "$random_password" >&2 # 输出密码到标准错误流
 }
 
 # 修改 sshd_config 文件
 modify_sshd_config() {
+    # 备份原始的sshd配置文件
     sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
     check_error
 
     # 检查文件中是否存在以'PermitRootLogin'开头的行
-    if grep -q '^PermitRootLogin' /etc/ssh/sshd_config; then
-        # 存在匹配行，用'PermitRootLogin yes'替换
-        sudo sed -i 's/^PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
-        check_error
-    else
+    if ! grep -q '^PermitRootLogin' /etc/ssh/sshd_config; then
         # 不存在匹配行，追加'PermitRootLogin yes'到文件末尾
         echo 'PermitRootLogin yes' | sudo tee -a /etc/ssh/sshd_config > /dev/null
         check_error
     fi
 
     # 检查文件中是否存在以'PasswordAuthentication'开头的行
-    if grep -q '^PasswordAuthentication' /etc/ssh/sshd_config; then
-        # 存在匹配行，用'PasswordAuthentication yes'替换
-        sudo sed -i 's/^PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
-        check_error
-    else
+    if ! grep -q '^PasswordAuthentication' /etc/ssh/sshd_config; then
         # 不存在匹配行，追加'PasswordAuthentication yes'到文件末尾
         echo 'PasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config > /dev/null
         check_error
@@ -46,8 +46,12 @@ modify_sshd_config() {
 
 # 重启 SSHD 服务
 restart_sshd_service() {
+    # 重启SSH服务
     sudo service sshd restart
-    check_error
+    if [ $? -ne 0 ]; then
+        echo "重启 SSH 服务失败。退出..." >&2
+        exit 1
+    fi
 }
 
 # 提示用户选择密码选项
@@ -67,7 +71,7 @@ case $option in
         password=$custom_password # 保存输入的密码
         ;;
     *)
-        echo "无效选项。退出..."
+        echo "无效选项。退出..." >&2
         exit 1
         ;;
 esac
@@ -75,9 +79,8 @@ esac
 modify_sshd_config
 restart_sshd_service
 
-echo "密码更改成功：$password" # 输出密码
-
-
+echo "密码更改成功：$password" >&2 # 输出密码到标准错误流
+echo "操作成功完成。" # 输出成功消息
 
 # 删除下载的脚本
 rm -f "$0"
