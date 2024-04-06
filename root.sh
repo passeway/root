@@ -21,13 +21,27 @@ modify_sshd_config() {
     sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
     check_error
 
-    # 在 sshd_config 中启用 PermitRootLogin
-    sudo sed -i 's/^#?PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
-    check_error
+    # 检查文件中是否存在以'PermitRootLogin'开头的行
+    if grep -q '^PermitRootLogin' /etc/ssh/sshd_config; then
+        # 存在匹配行，用'PermitRootLogin yes'替换
+        sudo sed -i 's/^PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+        check_error
+    else
+        # 不存在匹配行，追加'PermitRootLogin yes'到文件末尾
+        echo 'PermitRootLogin yes' | sudo tee -a /etc/ssh/sshd_config > /dev/null
+        check_error
+    fi
 
-    # 在 sshd_config 中启用 PasswordAuthentication
-    sudo sed -i 's/^#?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config
-    check_error
+    # 检查文件中是否存在以'PasswordAuthentication'开头的行
+    if grep -q '^PasswordAuthentication' /etc/ssh/sshd_config; then
+        # 存在匹配行，用'PasswordAuthentication yes'替换
+        sudo sed -i 's/^PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+        check_error
+    else
+        # 不存在匹配行，追加'PasswordAuthentication yes'到文件末尾
+        echo 'PasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config > /dev/null
+        check_error
+    fi
 }
 
 # 修改 PAM 配置文件
@@ -35,9 +49,15 @@ modify_pam_config() {
     sudo cp /etc/pam.d/sshd /etc/pam.d/sshd.bak
     check_error
 
-    # 取消注释与密码验证相关的行
-    sudo sed -i '/password.*required.*pam_unix.so/s/^#//g' /etc/pam.d/sshd
-    check_error
+    # 检查文件中是否存在与密码验证相关的行
+    if grep -q 'password.*required.*pam_unix.so' /etc/pam.d/sshd; then
+        # 存在匹配行，取消注释相关行
+        sudo sed -i '/password.*required.*pam_unix.so/s/^#//g' /etc/pam.d/sshd
+        check_error
+    else
+        echo "未找到与密码验证相关的行。"
+        exit 1
+    fi
 }
 
 # 重启 SSHD 服务
@@ -73,7 +93,6 @@ modify_pam_config
 restart_sshd_service
 
 echo "密码更改成功：$password" # 输出密码
-
 
 
 # 删除下载的脚本
