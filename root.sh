@@ -39,14 +39,14 @@ case $option in
 esac
 
 # 在 sshd_config 中启用 PermitRootLogin
-sudo sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
+sudo sed -i 's/^#?PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
 check_error
 
 # 在 sshd_config 中启用 PasswordAuthentication
-sudo sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+sudo sed -i 's/^#?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 check_error
 
-# 重启 SSH 服务
+# 重启 SSHD 服务
 sudo service sshd restart
 check_error
 
