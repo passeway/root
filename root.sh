@@ -28,9 +28,15 @@ modify_sshd_config() {
     # 在 sshd_config 中启用 PasswordAuthentication
     sudo sed -i 's/^#?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config
     check_error
+}
 
-    # 验证修改是否成功
-    grep -E "PermitRootLogin|PasswordAuthentication" /etc/ssh/sshd_config
+# 修改 PAM 配置文件
+modify_pam_config() {
+    sudo cp /etc/pam.d/sshd /etc/pam.d/sshd.bak
+    check_error
+
+    # 取消注释与密码验证相关的行
+    sudo sed -i '/password.*required.*pam_unix.so/s/^#//g' /etc/pam.d/sshd
     check_error
 }
 
@@ -63,9 +69,11 @@ case $option in
 esac
 
 modify_sshd_config
+modify_pam_config
 restart_sshd_service
 
 echo "密码更改成功：$password" # 输出密码
+
 
 
 # 删除下载的脚本
