@@ -38,12 +38,20 @@ case $option in
         ;;
 esac
 
+# 备份 sshd_config 文件
+sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+check_error
+
 # 在 sshd_config 中启用 PermitRootLogin
 sudo sed -i 's/^#?PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
 check_error
 
 # 在 sshd_config 中启用 PasswordAuthentication
 sudo sed -i 's/^#?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+check_error
+
+# 验证修改是否成功
+grep -E "PermitRootLogin|PasswordAuthentication" /etc/ssh/sshd_config
 check_error
 
 # 重启 SSHD 服务
