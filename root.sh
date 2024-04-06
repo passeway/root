@@ -44,22 +44,6 @@ modify_sshd_config() {
     fi
 }
 
-# 修改 PAM 配置文件
-modify_pam_config() {
-    sudo cp /etc/pam.d/sshd /etc/pam.d/sshd.bak
-    check_error
-
-    # 检查文件中是否存在与密码验证相关的行
-    if grep -q 'password.*required.*pam_unix.so' /etc/pam.d/sshd; then
-        # 存在匹配行，取消注释相关行
-        sudo sed -i '/password.*required.*pam_unix.so/s/^#//g' /etc/pam.d/sshd
-        check_error
-    else
-        echo "未找到与密码验证相关的行。"
-        exit 1
-    fi
-}
-
 # 重启 SSHD 服务
 restart_sshd_service() {
     sudo service sshd restart
@@ -89,10 +73,10 @@ case $option in
 esac
 
 modify_sshd_config
-modify_pam_config
 restart_sshd_service
 
 echo "密码更改成功：$password" # 输出密码
+
 
 
 # 删除下载的脚本
