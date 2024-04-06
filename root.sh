@@ -10,13 +10,7 @@ check_error() {
 
 # 生成随机密码
 generate_random_password() {
-    # 检查是否有root权限
-    if [ "$(id -u)" -ne 0 ]; then
-        echo "需要root权限来设置密码。退出..."
-        exit 1
-    fi
-
-    random_password=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9!@#$%^&*()-_=+{}[]|\;:,.<>?')
+    random_password=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9!@#$%^&*()_-')
     echo "root:$random_password" | sudo chpasswd
     check_error
     echo "$random_password" # 输出密码
@@ -28,14 +22,22 @@ modify_sshd_config() {
     check_error
 
     # 检查文件中是否存在以'PermitRootLogin'开头的行
-    if ! grep -q '^PermitRootLogin' /etc/ssh/sshd_config; then
+    if grep -q '^PermitRootLogin' /etc/ssh/sshd_config; then
+        # 存在匹配行，用'PermitRootLogin yes'替换
+        sudo sed -i 's/^PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+        check_error
+    else
         # 不存在匹配行，追加'PermitRootLogin yes'到文件末尾
         echo 'PermitRootLogin yes' | sudo tee -a /etc/ssh/sshd_config > /dev/null
         check_error
     fi
 
     # 检查文件中是否存在以'PasswordAuthentication'开头的行
-    if ! grep -q '^PasswordAuthentication' /etc/ssh/sshd_config; then
+    if grep -q '^PasswordAuthentication' /etc/ssh/sshd_config; then
+        # 存在匹配行，用'PasswordAuthentication yes'替换
+        sudo sed -i 's/^PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+        check_error
+    else
         # 不存在匹配行，追加'PasswordAuthentication yes'到文件末尾
         echo 'PasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config > /dev/null
         check_error
@@ -52,7 +54,7 @@ restart_sshd_service() {
 echo "请选择密码选项："
 echo "1. 生成密码"
 echo "2. 输入密码"
-read -p "请输入选项： " option
+read -p "请输入选项编号： " option
 
 case $option in
     1)
@@ -73,8 +75,8 @@ esac
 modify_sshd_config
 restart_sshd_service
 
-echo "操作成功完成。" # 输出成功消息
-echo "密码更改成功：$password" >&2 # 输出密码到标准错误流
+echo "密码更改成功：$password" # 输出密码
+
 
 
 # 删除下载的脚本
