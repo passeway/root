@@ -24,6 +24,4 @@ curl -sS -o root.sh https://raw.githubusercontent.com/passeway/root/main/root.sh
 2:在执行脚本之前，请确保您了解脚本的操作，并且备份您的系统或者重要数据。
 
 3:如果您在使用过程中遇到任何问题或者有任何建议，请随时提交GitHub Issues。
-## License
 
-GPL-3.0 License. See [License here](./LICENSE) for details.
