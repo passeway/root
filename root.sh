@@ -30,9 +30,9 @@ modify_sshd_config() {
     sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
     check_error "备份 sshd_config 文件时出错"
 
-    # 将 Include /etc/ssh/sshd_config.d/*.conf 更改为 #Include /etc/ssh/sshd_config.d/*.conf
-    sudo sed -i 's/^Include \/etc\/ssh\/sshd_config.d\/\*\.conf/#&/' /etc/ssh/sshd_config
-    check_error "更改 Include 行时出错"
+    # 注释掉 Include /etc/ssh/sshd_config.d/*.conf 行
+    sudo sed -i 's/^Include \/etc\/ssh\/sshd_config.d\/\*\.conf/# &/' /etc/ssh/sshd_config
+    check_error "注释掉 Include 行时出错"
 
     # 检查文件中是否存在以'PermitRootLogin'开头的行
     if grep -q '^PermitRootLogin' /etc/ssh/sshd_config; then
