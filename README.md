@@ -1,8 +1,7 @@
 
 ## 预览
 
-![preview](https://tc.943465722.xyz/i/2024/04/06/095838.png
-)
+![preview](预览.png)
 
 ## SSH密码
 
@@ -11,7 +10,7 @@
 
 ## 一键脚本
 
-  ```bash
+```bash
 curl -sS -o root.sh https://raw.githubusercontent.com/passeway/root/main/root.sh && chmod +x root.sh && ./root.sh
 ```
 ## 详细说明
