@@ -69,7 +69,7 @@ main() {
     echo "请选择密码选项："
     echo "1. 生成密码"
     echo "2. 输入密码"
-    read -p "请输入选项编号： " option
+    read -p "请输入选项编号：" option
 
     case $option in
         1)
@@ -77,13 +77,13 @@ main() {
             password=$(generate_random_password) # 保存生成的密码
             ;;
         2)
-            read -p "请输入密码： " custom_password
+            read -p "请输入更改密码：" custom_password
             echo "root:$custom_password" | sudo chpasswd
             check_error "修改密码时出错"
             password=$custom_password # 保存输入的密码
             ;;
         *)
-            echo "无效选项。退出..."
+            echo "无效选项 退出..."
             exit 1
             ;;
     esac
@@ -91,7 +91,7 @@ main() {
     modify_sshd_config
     restart_sshd_service
 
-    echo "密码更改成功：$password" # 输出密码
+    echo "密码已成功更改：$password" # 输出密码
 
     # 删除下载的脚本
     rm -f "$0"
