@@ -5,7 +5,7 @@
 
 ## 一键脚本
 ```
-bash <(curl -fsSL root-teal.vercel.app)
+bash <(curl -fsSL root-silk.vercel.app)
 ```
 
 ## 详细说明
