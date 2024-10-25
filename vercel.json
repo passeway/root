@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://raw.githubusercontent.com/passeway/root/refs/heads/main/root.sh",
+      "permanent": true
+    }
+  ]
+}
