@@ -94,7 +94,9 @@ main() {
     echo "密码已成功更改：$password" # 输出密码
 
     # 删除下载的脚本
-    rm -f "$0"
+    if [ -f "root.sh" ]; then
+        rm -f "root.sh"
+    fi
 }
 
 # 执行主函数
