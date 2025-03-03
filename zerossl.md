@@ -34,4 +34,8 @@ EOF
    wget -O /etc/ssl/certs/certificate.crt https://raw.githubusercontent.com/passeway/root/refs/heads/main/certificate.crt
    wget -O /etc/ssl/private/private.key https://raw.githubusercontent.com/passeway/root/refs/heads/main/private.key
    cat /etc/ssl/certs/certificate.crt /etc/ssl/certs/ca_bundle.crt > /etc/ssl/certs/fullchain.pem
-
+## AdGuardHome指令
+sudo /opt/AdGuardHome/AdGuardHome -s start
+sudo /opt/AdGuardHome/AdGuardHome -s stop
+sudo /opt/AdGuardHome/AdGuardHome -s restart
+sudo /opt/AdGuardHome/AdGuardHome -s status
