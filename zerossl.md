@@ -1,5 +1,17 @@
 # SSL 证书配置
 
+IP证书： https://zerossl.com
+
+创建文件夹： mkdir -p ./.well-known/pki-validation
+
+创建验证文件：
+```
+cat << EOF | sudo tee ./.well-known/pki-validation/替换.txt
+
+EOF
+```
+临时HTTP服务器：python3 -m http.server 80
+
 ## 证书文件路径
 
 - **证书文件 (Certificate)**  
