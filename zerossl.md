@@ -45,3 +45,5 @@ sudo /opt/AdGuardHome/AdGuardHome -s stop
 sudo /opt/AdGuardHome/AdGuardHome -s restart
 
 sudo /opt/AdGuardHome/AdGuardHome -s status
+
+https://adguard-dns.io/kb/zh-CN/adguard-home/faq/#verboselog
