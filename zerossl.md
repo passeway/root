@@ -2,9 +2,15 @@
 
 IP证书： https://zerossl.com
 
-创建文件夹： mkdir -p ./.well-known/pki-validation
+创建文件夹 
+```
+mkdir -p /etc/ssl/zerossl
+```
+```
+mkdir -p ./.well-known/pki-validation
+```
 
-创建验证文件：
+创建验证文件
 ```
 cat << EOF | sudo tee ./.well-known/pki-validation/替换.txt
 
@@ -15,25 +21,22 @@ EOF
 ## 证书文件路径
 
 - **证书文件 (Certificate)**  
-  `/etc/ssl/certs/certificate.crt`
+  `/etc/ssl/zerossl/certificate.crt`
   
 - **证书链 (CA Bundle)**  
-  `/etc/ssl/certs/ca_bundle.crt`
+  `/etc/ssl/zerossl/ca_bundle.crt`
   
 - **私钥文件 (Private Key)**  
-  `/etc/ssl/private/private.key`
+  `/etc/ssl/zerossl/private.key`
   
 - **完整证书 (fullchain.pem)**  
-  `/etc/ssl/certs/fullchain.pem`
+  `/etc/ssl/zerossl/fullchain.pem`
 
-## 下载和配置证书
 
-1. 下载证书链文件、证书文件和私钥文件：
-   ```bash
-   wget -O /etc/ssl/certs/ca_bundle.crt https://raw.githubusercontent.com/passeway/root/refs/heads/main/ca_bundle.crt
-   wget -O /etc/ssl/certs/certificate.crt https://raw.githubusercontent.com/passeway/root/refs/heads/main/certificate.crt
-   wget -O /etc/ssl/private/private.key https://raw.githubusercontent.com/passeway/root/refs/heads/main/private.key
-   cat /etc/ssl/certs/certificate.crt /etc/ssl/certs/ca_bundle.crt > /etc/ssl/certs/fullchain.pem
+合并服务器证书（certificate.crt）和证书链文件（ca_bundle.crt）
+```
+cat /etc/ssl/zerossl/certificate.crt /etc/ssl/zerossl/ca_bundle.crt > /etc/ssl/zerossl/fullchain.pem
+```
 ## AdGuardHome指令
 sudo /opt/AdGuardHome/AdGuardHome -s start
 
