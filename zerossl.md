@@ -36,6 +36,9 @@ EOF
    cat /etc/ssl/certs/certificate.crt /etc/ssl/certs/ca_bundle.crt > /etc/ssl/certs/fullchain.pem
 ## AdGuardHome指令
 sudo /opt/AdGuardHome/AdGuardHome -s start
+
 sudo /opt/AdGuardHome/AdGuardHome -s stop
+
 sudo /opt/AdGuardHome/AdGuardHome -s restart
+
 sudo /opt/AdGuardHome/AdGuardHome -s status
