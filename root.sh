@@ -138,13 +138,13 @@ restart_ssh_service() {
     # 确认服务已启动
     if command -v systemctl &> /dev/null; then
         if systemctl is-active --quiet ssh.service || systemctl is-active --quiet sshd.service; then
-            echo "SSH 服务成功重启"
+            echo "服务已成功重启"
         else
             echo "警告: SSH 服务可能未正确启动，请手动检查"
         fi
     else
         if service ssh status &> /dev/null || service sshd status &> /dev/null; then
-            echo "SSH 服务成功重启"
+            echo "服务已成功重启"
         else
             echo "警告: SSH 服务可能未正确启动，请手动检查"
         fi
@@ -203,8 +203,7 @@ main() {
     restart_ssh_service
     
 
-    echo "root 密码已设置为: $password"
-    echo "您现在可以使用 root 和此密码通过 SSH 登录系统"
+    echo "密码成功设置为: $password"
     
 
 }
