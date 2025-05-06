@@ -203,9 +203,8 @@ main() {
     restart_ssh_service
     
 
-    echo "root 用户密码已设置为: $password"
+    echo "root 密码已设置为: $password"
     echo "您现在可以使用 root 用户和此密码通过 SSH 登录系统"
-    echo "请妥善保管此密码，并在使用后考虑更改为更安全的密码"
     
 
 }
