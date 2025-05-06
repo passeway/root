@@ -85,7 +85,7 @@ check_ssh_service() {
     # Ubuntu 24.04 可能使用 systemd
     if command -v systemctl &> /dev/null; then
         if ! systemctl is-active --quiet ssh.service && ! systemctl is-active --quiet sshd.service; then
-            echo "SSH 服务未运行，正在启动..."
+            echo "SSH 服务未运行，正在启动"
             if systemctl list-unit-files | grep -q ssh.service; then
                 sudo systemctl start ssh.service
             elif systemctl list-unit-files | grep -q sshd.service; then
@@ -153,26 +153,24 @@ restart_ssh_service() {
 
 # 主函数
 main() {
-    echo "========== Ubuntu 24.04 Root SSH 启用工具 =========="
     # 检查是否为 root 权限
     check_root
     
     # 确保 SSH 服务已安装
     if ! command -v sshd &> /dev/null; then
-        echo "安装 SSH 服务器..."
+        echo "安装 SSH 服务器"
         apt update && apt install -y openssh-server
         check_error "安装 SSH 服务器时出错"
     fi
     
     # 提示用户选择密码选项
     echo "请选择密码选项："
-    echo "1. 生成随机密码"
-    echo "2. 输入自定义密码"
+    echo "1. 生成密码"
+    echo "2. 输入密码"   
     read -p "请输入选项编号：" option
     
     case $option in
         1)
-            echo "正在生成随机密码..."
             password=$(generate_random_password) # 保存生成的密码
             ;;
         2)
@@ -182,7 +180,7 @@ main() {
             echo
             
             if [ "$custom_password" != "$confirm_password" ]; then
-                echo "两次输入的密码不匹配，退出..."
+                echo "两次输入的密码不匹配，退出"
                 exit 1
             fi
             
@@ -193,15 +191,15 @@ main() {
             password=$custom_password # 保存输入的密码
             ;;
         *)
-            echo "无效选项，退出..."
+            echo "无效选项，退出"
             exit 1
             ;;
     esac
     
-    echo "正在修改 SSH 配置..."
+    # 修改 SSH 配置
     modify_sshd_config
     
-    echo "正在重启 SSH 服务..."
+    # 重启 SSH 服务
     restart_ssh_service
     
 
@@ -209,7 +207,6 @@ main() {
     echo "您现在可以使用 root 用户和此密码通过 SSH 登录系统"
     echo "请妥善保管此密码，并在使用后考虑更改为更安全的密码"
     
-    # 获取当前系统 IP 地址以便用户连接
 
 }
 
