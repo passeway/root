@@ -1,6 +1,6 @@
 ## 终端预览
 
-![preview](image.png)
+![preview](https://img.passeway.de/2025/05/2536c0e398d15933f8289c0530169cd3.png)
 
 ## 一键脚本
 ```
