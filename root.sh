@@ -204,7 +204,7 @@ main() {
     
 
     echo "root 密码已设置为: $password"
-    echo "您现在可以使用 root 用户和此密码通过 SSH 登录系统"
+    echo "您现在可以使用 root 和此密码通过 SSH 登录系统"
     
 
 }
