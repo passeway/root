@@ -2,7 +2,6 @@
 
 ![preview](image.png)
 
-
 ## 一键脚本
 ```
 bash <(curl -fsSL root-silk.vercel.app)
