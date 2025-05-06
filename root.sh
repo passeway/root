@@ -138,13 +138,13 @@ restart_ssh_service() {
     # 确认服务已启动
     if command -v systemctl &> /dev/null; then
         if systemctl is-active --quiet ssh.service || systemctl is-active --quiet sshd.service; then
-            echo "服务已成功重启"
+            echo "服务已成功重启："
         else
             echo "警告: SSH 服务可能未正确启动，请手动检查"
         fi
     else
         if service ssh status &> /dev/null || service sshd status &> /dev/null; then
-            echo "服务已成功重启"
+            echo "服务已成功重启："
         else
             echo "警告: SSH 服务可能未正确启动，请手动检查"
         fi
